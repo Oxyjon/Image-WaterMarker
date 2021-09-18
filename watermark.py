@@ -1,6 +1,6 @@
 from tkinter import *
 from tkinter import filedialog
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, ImageTk
 
 class WaterMark:
     def __init__(self):
@@ -9,18 +9,21 @@ class WaterMark:
         window.config(padx=50, pady=50)
 
         #Watermark Text
-        self.watermark_text = Entry()
-        self.watermark_text.pack()
+        self.watermark_input = Entry()
+        self.watermark_input.grid(column=1, row=0)
 
-        # Canvas
-        canvas = Canvas(width=400, height=400)
-        canvas.pack()
+        #Label
+        self.watermark_text = Label(text="Watermark Text:")
+        self.watermark_text.grid(column=0, row=0)
+
+        self.success_text = Label(text='')
+        self.success_text.grid(column=0, row=2, columnspan=2)
         #Buttons
         browse_btn = Button(text='Browse', command=self.browse_file)
-        browse_btn.pack()
+        browse_btn.grid(column=0, row=1)
 
         watermark_btn = Button(text='Watermark Image', command=self.watermark_image)
-        watermark_btn.pack()
+        watermark_btn.grid(column=1, row=1)
         window.mainloop()
 
 
@@ -32,7 +35,6 @@ class WaterMark:
                                                   ("image", ".png"),
                                                   ("image", ".jpg"),
                                               ])
-
     def watermark_image(self):
         # Open Image
         with Image.open(self.filename).convert("RGBA") as base_img:
@@ -42,7 +44,9 @@ class WaterMark:
             txt = ImageDraw.Draw(base_img)
 
             # draw text, half opacity
-            txt.text((250, 250), self.watermark_text.get(), font=fnt, fill=(255, 255, 255, 128))
+            txt.text((250, 250), self.watermark_input.get(), font=fnt, fill=(255, 255, 255, 128))
 
             base_img.save(self.filename[:-4] + '-watermarked.png' )
             base_img.show()
+
+            self.success_text.config(text='Saved into' + self.filename[:-4] + '-watermarked.png')
